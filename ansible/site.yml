@@ -72,7 +72,7 @@
         path: "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.deployed"
         timeout: 120
       register: deployment_wait
-      ignore_errors: yes
+      ignore_errors: true
       tags: [deploy]
 
     - name: Show deployment error if failed
@@ -97,13 +97,10 @@
     - name: Display deployment information
       debug:
         msg:
-          - "=========================================="
           - "WildFly AI Demo Deployed Successfully!"
-          - "=========================================="
           - "Application URL: http://{{ ansible_default_ipv4.address }}:{{ wildfly_port_http }}/ai-demo"
           - "API Endpoint: http://{{ ansible_default_ipv4.address }}:{{ wildfly_port_http }}/ai-demo/api/demo/check"
           - "Management Console: http://{{ ansible_default_ipv4.address }}:{{ wildfly_management_port }}"
-          - "=========================================="
       tags: [deploy, verify]
 
   handlers:
