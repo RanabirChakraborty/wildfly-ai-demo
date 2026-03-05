@@ -1,0 +1,114 @@
+---
+- name: Deploy Enterprise AI Stack on WildFly
+  hosts: all
+  become: true
+  collections:
+    - middleware_automation.wildfly
+
+  pre_tasks:
+    - name: Verify WAR file exists
+      stat:
+        path: "{{ app_war_path }}"
+      register: war_file
+      delegate_to: localhost
+      become: false
+
+    - name: Fail if WAR file not found
+      fail:
+        msg: "WAR file not found at {{ app_war_path }}. Run 'mvn clean package' first."
+      when: not war_file.stat.exists
+
+  roles:
+    - role: wildfly_install
+      tags: [install, wildfly]
+
+    - role: wildfly_systemd
+      tags: [systemd, service]
+
+  tasks:
+    - name: Ensure deployment directory exists
+      file:
+        path: "{{ wildfly_install_dir }}/standalone/deployments"
+        state: directory
+        owner: "{{ wildfly_user }}"
+        group: "{{ wildfly_group }}"
+        mode: '0755'
+      tags: [deploy]
+
+    - name: Remove stale deployment markers
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.dodeploy"
+        - "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.deployed"
+        - "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.failed"
+        - "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.isdeploying"
+        - "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.isundeploying"
+        - "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.undeployed"
+        - "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.skipdeploy"
+      tags: [deploy]
+
+    - name: Deploy the AI Java App
+      copy:
+        src: "{{ app_war_path }}"
+        dest: "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war"
+        owner: "{{ wildfly_user }}"
+        group: "{{ wildfly_group }}"
+        mode: '0644'
+      tags: [deploy]
+
+    - name: Trigger deployment with .dodeploy marker
+      file:
+        path: "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.dodeploy"
+        state: touch
+        owner: "{{ wildfly_user }}"
+        group: "{{ wildfly_group }}"
+        mode: '0644'
+      tags: [deploy]
+
+    - name: Wait for deployment to complete
+      wait_for:
+        path: "{{ wildfly_install_dir }}/standalone/deployments/ai-demo.war.deployed"
+        timeout: 120
+      register: deployment_wait
+      ignore_errors: yes
+      tags: [deploy]
+
+    - name: Show deployment error if failed
+      when: deployment_wait is failed
+      tags: [deploy]
+      block:
+        - name: Read server log on failure
+          command: tail -50 {{ wildfly_install_dir }}/standalone/log/server.log
+          register: server_log
+          failed_when: false
+
+        - name: Display error information
+          fail:
+            msg: |
+              Deployment failed or timed out after 120 seconds!
+              Check logs with: sudo journalctl -u {{ wildfly_service_name }} -n 50
+              Or server log: {{ wildfly_install_dir }}/standalone/log/server.log
+
+              Last 50 lines of server.log:
+              {{ server_log.stdout }}
+
+    - name: Display deployment information
+      debug:
+        msg:
+          - "=========================================="
+          - "WildFly AI Demo Deployed Successfully!"
+          - "=========================================="
+          - "Application URL: http://{{ ansible_default_ipv4.address }}:{{ wildfly_port_http }}/ai-demo"
+          - "API Endpoint: http://{{ ansible_default_ipv4.address }}:{{ wildfly_port_http }}/ai-demo/api/demo/check"
+          - "Management Console: http://{{ ansible_default_ipv4.address }}:{{ wildfly_management_port }}"
+          - "=========================================="
+      tags: [deploy, verify]
+
+  handlers:
+    - name: Restart WildFly
+      systemd:
+        name: "{{ wildfly_service_name }}"
+        state: restarted
+        enabled: yes

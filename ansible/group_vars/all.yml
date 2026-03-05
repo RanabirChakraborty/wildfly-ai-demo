@@ -1,0 +1,14 @@
+---
+app_war_path: "../target/ai-demo.war"
+
+wildfly_version: "39.0.0.Final"
+wildfly_install_dir: "/opt/wildfly/wildfly-39.0.0.Final"
+wildfly_user: "wildfly"
+wildfly_group: "wildfly"
+
+java_home: "/usr/lib/jvm/java-17-openjdk"
+
+wildfly_service_name: "wildfly"
+wildfly_port_http: 8380
+wildfly_port_https: 8743
+wildfly_management_port: 10290

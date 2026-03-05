@@ -1,0 +1,37 @@
+# =========================================================================
+# Ansible Inventory File
+# =========================================================================
+# Define your target servers here. You can use:
+# - localhost for local deployment
+# - IP addresses for remote servers
+# - Hostnames for remote servers
+# =========================================================================
+
+# Local Deployment (for testing)
+[local]
+localhost ansible_connection=local
+
+# Development Servers
+[dev]
+demo-server ansible_host=10.0.214.95 ansible_user=cloud-user
+
+# Staging Servers
+[staging]
+# staging-server-01 ansible_host=10.0.1.20 ansible_user=wildfly
+# staging-server-02 ansible_host=10.0.1.21 ansible_user=wildfly
+
+# Production Servers
+[production]
+# prod-server-01 ansible_host=10.0.2.30 ansible_user=wildfly
+# prod-server-02 ansible_host=10.0.2.31 ansible_user=wildfly
+
+# Group all WildFly servers together
+[wildfly:children]
+local
+dev
+staging
+production
+
+# Variables for all hosts
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
