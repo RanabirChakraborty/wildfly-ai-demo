@@ -13,7 +13,6 @@ localhost ansible_connection=local
 
 # Development Servers
 [dev]
-demo-server ansible_host=10.0.214.95 ansible_user=cloud-user
 
 # Staging Servers
 [staging]
