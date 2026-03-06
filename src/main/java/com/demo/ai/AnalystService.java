@@ -1,7 +1,7 @@
 package com.demo.ai;
 
 import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,19 +23,24 @@ public class AnalystService {
      */
     @PostConstruct
     public void init() {
-        // Get API key from environment variable
-        String apiKey = System.getenv("OPENAI_API_KEY");
+        // Get model name from environment variable, default to gemma:2b
+        String modelName = System.getenv("OLLAMA_MODEL");
+        if (modelName == null || modelName.isEmpty()) {
+            modelName = "gemma:2b";
+            System.out.println("INFO: OLLAMA_MODEL not set. Using default: " + modelName);
+        }
 
-        // For demo purposes, use a dummy key if not set
-        if (apiKey == null || apiKey.isEmpty()) {
-            apiKey = "demo-key-not-configured";
-            System.out.println("WARNING: OPENAI_API_KEY not set. API calls will fail.");
+        // Get Ollama base URL from environment variable, default to localhost
+        String baseUrl = System.getenv("OLLAMA_BASE_URL");
+        if (baseUrl == null || baseUrl.isEmpty()) {
+            baseUrl = "http://localhost:11434";
+            System.out.println("INFO: OLLAMA_BASE_URL not set. Using default: " + baseUrl);
         }
 
         // Create the ChatLanguageModel
-        ChatLanguageModel chatModel = OpenAiChatModel.builder()
-                .apiKey(apiKey)
-                .modelName("gpt-3.5-turbo")
+        ChatLanguageModel chatModel = OllamaChatModel.builder()
+                .baseUrl(baseUrl)
+                .modelName(modelName)
                 .temperature(0.7)
                 .timeout(java.time.Duration.ofSeconds(60))
                 .build();
@@ -43,7 +48,7 @@ public class AnalystService {
         // Generate the AI service implementation using LangChain4j
         this.analyst = AiServices.create(Analyst.class, chatModel);
 
-        System.out.println("AI Analyst Service initialized successfully");
+        System.out.println("AI Analyst Service initialized successfully with Ollama model: " + modelName);
     }
 
     /**

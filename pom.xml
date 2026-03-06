@@ -62,10 +62,10 @@
             <version>${version.langchain4j}</version>
         </dependency>
 
-        <!-- LangChain4j OpenAI Model Provider -->
+        <!-- LangChain4j Ollama Model Provider -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-open-ai</artifactId>
+            <artifactId>langchain4j-ollama</artifactId>
             <version>${version.langchain4j}</version>
         </dependency>
     </dependencies>
