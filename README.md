@@ -1,13 +1,13 @@
 # WildFly AI Demo
 
-AI-powered sentiment analysis REST API built with **WildFly 39** and **LangChain4j** using **OpenAI**.
+AI-powered sentiment analysis REST API built with **WildFly 39** and **LangChain4j** using **Ollama**.
 
 ## Architecture
 
 ```
 src/main/java/com/demo/ai/
 ├── Analyst.java         # AI service interface (LangChain4j)
-├── AnalystService.java  # OpenAI chat model integration
+├── AnalystService.java  # Ollama chat model integration
 ├── DemoResource.java    # REST endpoint (JAX-RS)
 └── RestConfig.java      # REST configuration
 
@@ -31,9 +31,13 @@ cd ansible
 ansible-playbook -i inventory site.yml --tags deploy
 ```
 
-### 3. Configure OpenAI
+### 3. Configure Ollama
 ```bash
-ssh cloud-user@<server> "sudo sed -i 's/OPENAI_API_KEY=.*/OPENAI_API_KEY=your-key/' /etc/sysconfig/wildfly.conf && sudo systemctl restart wildfly"
+# Set Ollama model (defaults to gemma:2b if not set)
+ssh cloud-user@<server> "sudo sed -i 's/OLLAMA_MODEL=.*/OLLAMA_MODEL=gemma:2b/' /etc/sysconfig/wildfly.conf && sudo systemctl restart wildfly"
+
+# Optional: Set Ollama base URL (defaults to http://localhost:11434)
+ssh cloud-user@<server> "sudo sed -i 's/OLLAMA_BASE_URL=.*/OLLAMA_BASE_URL=http://localhost:11434/' /etc/sysconfig/wildfly.conf && sudo systemctl restart wildfly"
 ```
 
 ### 4. Test
@@ -57,7 +61,7 @@ java_home: "/usr/lib/jvm/java-17-openjdk"
 - **WildFly** 39.0.0.Final (Java 17)
 - **LangChain4j** 0.35.0
 - **Jakarta EE 10** (CDI, JAX-RS)
-- **OpenAI** gpt-3.5-turbo
+- **Ollama** gemma:2b (configurable)
 
 ## API
 

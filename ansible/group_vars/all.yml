@@ -2,7 +2,7 @@
 app_war_path: "../target/ai-demo.war"
 
 wildfly_version: "39.0.0.Final"
-wildfly_install_dir: "/opt/wildfly/wildfly-39.0.0.Final"
+wildfly_install_dir: "/opt/wildfly-39.0.0.Final"
 wildfly_user: "wildfly"
 wildfly_group: "wildfly"
 
