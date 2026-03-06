@@ -1,13 +1,13 @@
 # WildFly AI Demo
 
-AI-powered sentiment analysis REST API built with **WildFly 39** and **LangChain4j** using **Ollama**.
+Conversational AI REST API built with **WildFly 39**, **LangChain4j**, and **Ollama** (gemma:2b). Demonstrates enterprise Java integration with local LLM for text analysis and conversational responses.
 
 ## Architecture
 
 ```
 src/main/java/com/demo/ai/
-├── Analyst.java         # AI service interface (LangChain4j)
-├── AnalystService.java  # Ollama chat model integration
+├── Analyst.java         # AI service interface with conversational prompt
+├── AnalystService.java  # Ollama chat model integration (gemma:2b)
 ├── DemoResource.java    # REST endpoint (JAX-RS)
 └── RestConfig.java      # REST configuration
 
@@ -45,6 +45,12 @@ ssh cloud-user@<server> "sudo sed -i 's/OLLAMA_BASE_URL=.*/OLLAMA_BASE_URL=http:
 curl -X POST http://<server>:8380/ai-demo/api/demo/check \
   -H "Content-Type: text/plain" \
   -d "This product is amazing!"
+
+# Sample response:
+# Thank you for the positive feedback! As a helpful AI assistant,
+# I am always delighted to hear that my work is making a difference.
+# I am happy to provide any additional insights or answer any
+# questions you may have about the product.
 ```
 
 ## Configuration
@@ -67,4 +73,5 @@ java_home: "/usr/lib/jvm/java-17-openjdk"
 
 **POST** `/ai-demo/api/demo/check`
 - **Content-Type:** `text/plain`
-- **Returns:** AI-generated sentiment analysis
+- **Body:** Any text input
+- **Returns:** Conversational AI response using Ollama's gemma:2b model
