@@ -7,9 +7,9 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 
 /**
- * AI Sentiment Analysis Service
+ * Conversational AI Service
  *
- * This service uses LangChain4j to analyze sentiment of text.
+ * This service uses LangChain4j with Ollama to provide conversational AI responses.
  * It creates an AI service implementation at startup using the Analyst interface.
  */
 @ApplicationScoped
@@ -52,10 +52,10 @@ public class AnalystService {
     }
 
     /**
-     * Analyze the sentiment of the provided text.
+     * Analyze the text and provide a conversational AI response.
      *
      * @param text The text to analyze
-     * @return AI-generated sentiment analysis
+     * @return AI-generated conversational response
      */
     public String analyze(String text) {
         if (analyst == null) {
