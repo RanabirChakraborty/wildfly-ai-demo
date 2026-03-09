@@ -18,19 +18,7 @@ import jakarta.ws.rs.core.MediaType;
 public class DemoResource {
 
     @Inject
-    AnalystService analystService; // CDI injects the AI service
-
-    /**
-     * Analyzes the sentiment of incoming text messages.
-     *
-     * Example usage:
-     * curl -X POST http://localhost:8080/ai-demo/api/demo/check \
-     *      -H "Content-Type: text/plain" \
-     *      -d "This product is amazing!"
-     *
-     * @param message The text message to analyze
-     * @return Sentiment analysis result
-     */
+    AnalystService analystService;
     @POST
     @Path("/check")
     @Produces(MediaType.TEXT_PLAIN)

@@ -17,10 +17,6 @@ public class AnalystService {
 
     private Analyst analyst;
 
-    /**
-     * Initialize the AI service on startup.
-     * Creates a ChatLanguageModel and generates an implementation of the Analyst interface.
-     */
     @PostConstruct
     public void init() {
         // Get model name from environment variable, default to gemma:2b
@@ -51,12 +47,6 @@ public class AnalystService {
         System.out.println("AI Analyst Service initialized successfully with Ollama model: " + modelName);
     }
 
-    /**
-     * Analyze the text and provide a conversational AI response.
-     *
-     * @param text The text to analyze
-     * @return AI-generated conversational response
-     */
     public String analyze(String text) {
         if (analyst == null) {
             return "Error: AI service not initialized";

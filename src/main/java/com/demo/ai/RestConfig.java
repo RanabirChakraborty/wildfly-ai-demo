@@ -13,5 +13,4 @@ import jakarta.ws.rs.core.Application;
 @ApplicationPath("/api")
 public class RestConfig extends Application {
     // Empty class - the annotation does all the work
-    // This tells WildFly: "Hey, I have REST services here!"
 }
