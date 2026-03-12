@@ -2,6 +2,10 @@
 
 Conversational AI REST API built with **WildFly 39**, **LangChain4j**, and **Ollama** (gemma:2b). Demonstrates enterprise Java integration with local LLM for text analysis and conversational responses.
 
+## Output Response
+
+<img width="1500" height="592" alt="Screenshot 2026-03-10 at 12 21 41 AM" src="https://github.com/user-attachments/assets/32b12a3c-7e82-4bec-a0b3-0f0f04ddb0bc" />
+
 ## Architecture
 
 ```
